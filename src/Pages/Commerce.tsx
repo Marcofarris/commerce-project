@@ -2,12 +2,19 @@
 import { useState, useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
-import Button from "react-bootstrap/Button";
-import Table from 'react-bootstrap/Table';
-import Charts from "./Charts";
+
+import { Box, Grid, GridItem, Select, Stack, Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react'
+import {
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+} from '@chakra-ui/react'
+import { Flex, Spacer, Center, Square, Text } from '@chakra-ui/react'
+import { SimpleGrid } from '@chakra-ui/react'
+import { Input } from '@chakra-ui/react'
+import { Button, ButtonGroup } from '@chakra-ui/react'
 
 
 function Commerce() {
@@ -32,11 +39,6 @@ function Commerce() {
   useEffect(() => {
     getCarts();
   }, []);
-
-  // useEffect(() => {
-  //   getArticlesByCategory();
-  // }, [category]);
-
 
   useEffect(() => {
     getArticles();
@@ -87,37 +89,12 @@ function Commerce() {
     }
   }
 
-  // // Ricerca articolo
-  // const findArticles = (e_input) => {
-  //   setInput(e_input)
-  //   let digit = new FormData();
-  //   digit.append('input', e_input);
-  //   digit.append('category', category);
-
-  //   fetch(`http://127.0.0.1:8000/api/findArticles`,
-  //     {
-  //       method: "POST",
-  //       headers: {
-  //         "Accept": "application/json",
-  //       },
-  //       body: digit,
-  //     }
-  //   ).then((res) => {
-  //     res.json().then((ris) => {
-  //       setArticoli(ris)
-  //       articoli.map((el) => {
-  //         el.quantita = 0;
-  //       })
-  //     })
-  //   })
-  // }
-
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       let digit = new FormData();
       digit.append('input', input);
       digit.append('category', category);
-  
+
       fetch(`http://127.0.0.1:8000/api/findArticles`,
         {
           method: "POST",
@@ -203,35 +180,11 @@ function Commerce() {
 
   };
 
-  const buy = (id, cassa_id) => {
-    // 
-    let acquisto = new FormData();
-    acquisto.append('order_id', String(id));
-    acquisto.append('cassa_id', String(cassa_id));
-    acquisto.append('user_id', String(sessionStorage.getItem("user_id")));
 
-    fetch(`${URL}/acquista`,
-      {
-        method: "POST",
-        headers: {
-          "Accept": "application/json",
-          'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-        },
-        body: acquisto,
-      }
-    ).then((res) => {
-      res.json().then((ris) => {
-        // Richiama fetch get orders
-        getOrders();
-        getCarts();
-      })
-    }
-    );
-  }
 
   const getOrders = () => {
     // Recupero ordini
-    if (role == "Admin") { // Diverso per prova
+    if (role == "Admin") {
       fetch(`${URL}/ordine`,
         {
           method: "GET",
@@ -248,93 +201,62 @@ function Commerce() {
       );
     }
   }
-  useEffect(() => {
-    getOrders();
-  }, []);
-
-  const renderOrders = () => {
-    //Attenzione, ho invertito per prova
-    if (role == "Admin") {
-      return <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Cassa</th>
-            <th>Quantità</th>
-            <th>Prezzo</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ordini.map((el) => ([
-            <tr>
-              <td >{el.user_id}</td>
-              <td >{el.cassa_id}</td>
-              <td >{el.quantita}</td>
-              <td >{el.price} $</td>
-              <td><Button onClick={() => buy(el.id, el.cassa_id)} key={el.id} className="btn btn-dark m-1">Buy</Button></td>
-            </tr>
-          ]
-          ))}
-
-        </tbody>
-      </Table>
-    }
-  }
 
 
   return (
     <>
-      <Container className="m-5">
-        <Row>
-          {queue.map((el) => ([
-            <Col className="border m-1 bg-success">
-              <input type="number" key={'Input' + el.id} value={el.totale} readOnly className="m-1" />
-            </Col>
-          ]
-          ))}
-        </Row>
-        <Row>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Title: <InputGroup className="mb-3">
-                  <Form.Control
-                    type="string"
-                    value={input}
-                    onChange={(e) => {
-                      //findArticles(e.target.value)
-                     setInput(e.target.value)
-                    }
-                    }
-                  />
-                </InputGroup></th>
-                <th>Category:  <Form.Select size="sm"
-                  //value={category}
-                  onChange={e => {
-                    setCategory(e.target.value)
-                    getArticlesByCategory(e.target.value)
-                    setInput("")
-                  }}>
-                  <option>all</option>
-                  <option>elettrodomestici</option>
-                  <option>musica</option>
-                  <option>videogiochi</option>
-                </Form.Select></th>
-                <th>Quantità</th>
-                <th>Prezzo</th>
-              </tr>
-            </thead>
-            <tbody>
-              {articoli.map((el) => ([
-                <tr>
-                  <td >{el.title}</td>
-                  <th>{el.category}</th>
-                  <td > <InputGroup className="mb-3">
-                    <Form.Control
-                      type="number"
-                      aria-label="Amount"
-                      value={el.quantita}
-                      onChange={(e) => {
+      <SimpleGrid columns={5} spacing={10}>
+        {queue.map((el) => ([
+          <Container>
+            <Row >
+              <Text className="d-flex justify-content-center" as='b'>Cassa numero {el.id}</Text>
+            </Row>
+            <Row className="d-flex justify-content-center">
+              <NumberInput size='lg' isReadOnly maxW={32} defaultValue={15} min={10} key={'Input' + el.id} value={el.totale} >
+                <NumberInputField />
+                <NumberInputStepper >
+                </NumberInputStepper>
+              </NumberInput>
+            </Row>
+          </Container>
+        ]
+        ))}
+      </SimpleGrid>
+
+      <TableContainer p={10}>
+        <Table variant="striped" colorScheme="teal">
+          <TableCaption></TableCaption>
+          <Thead>
+            <Tr>
+              <Th>Titolo : <Input value={input}
+                onChange={(e) => {
+                  //findArticles(e.target.value)
+                  setInput(e.target.value)
+                }
+                } placeholder='ricerca...' size='sm' width='auto' m={5} /></Th>
+              <Th><Select m={1} onChange={e => {
+                setCategory(e.target.value)
+                getArticlesByCategory(e.target.value)
+                setInput("")
+              }}>
+                <option>all</option>
+                <option>elettrodomestici</option>
+                <option>musica</option>
+                <option>videogiochi</option>
+              </Select></Th>
+              <Th textAlign="center">Quantità</Th>
+              <Th>Prezzo</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {articoli.map((el) => ([
+              <Tr>
+                <Td >{el.title}</Td>
+                <Td>{el.category}</Td>
+                <Td >
+                  <Stack shouldWrapChildren direction='row'>
+                    <NumberInput size='lg' >
+                      <NumberInputField border='10px' boxShadow='md' placeholder="inserisci quantità..." value={el.quantita} onChange={(e) => {
                         // Inserisco la quantita come proprietà nell'oggetto articoli
                         const newState = articoli.map((element) => {
                           if (element.id == el.id) {
@@ -344,28 +266,26 @@ function Commerce() {
                         });
                         setArticoli(newState)
                       }
-                      }
-                    />
-                  </InputGroup> </td>
-                  <td >{el.price} $</td>
-                  <td>
-                    <Button onClick={() => {
-                      handleSubmit(el.price, el.quantita)
-                      el.quantita = '';
-                    }
-                    }
-                      key={el.id} className="btn btn-dark m-1">Add</Button></td>
-                </tr>
-              ]
-              ))}
+                      } />
+                      <NumberInputStepper >
+                      </NumberInputStepper>
+                    </NumberInput></Stack>
 
-            </tbody>
-          </Table>
-        </Row>
-        <Row className="m-5">
-          {renderOrders()}
-        </Row>
-      </Container>
+                </Td>
+                <Td >{el.price} $</Td>
+                <Td>
+                  <Button onClick={() => {
+                    handleSubmit(el.price, el.quantita)
+                    el.quantita = '';
+                  }
+                  }
+                    key={el.id} colorScheme='red'>Add</Button></Td>
+              </Tr>
+            ]
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
     </>
   );
 }

@@ -4,6 +4,8 @@ import Commerce from "./Pages/Commerce";
 import Layout from "./Pages/Layout";
 import Charts from "./Pages/Charts";
 import Login from "./Pages/Login";
+import Email from "./Pages/Email";
+import Orders from "./Pages/Orders";
 import Register from "./Pages/Register";
 import { useEffect, useState } from "react";
 import { UserContext } from "./UserContext"
@@ -31,6 +33,14 @@ function App() {
     return <Route index path={percorso} element={component} />
   };
 
+  const AdminRoute = (percorso: string, component) => {
+    //Creare fetch per prendere tokenServer?
+    // If(tokenSession == tokenServer?)
+    if (window.sessionStorage.getItem("role") == "Admin") {
+      return <Route index path={percorso} element={component} />
+    }
+    return null
+  };
 
   return (
 
@@ -40,8 +50,10 @@ function App() {
           <Route path="/" element={<Layout />}>
             {PrivateRoute("commerce", <Commerce />)}
             {PrivateRoute("charts", <Charts />)}
+            {PrivateRoute("email", <Email />)}
             {GuestRoute("login", <Login />)}
             {GuestRoute("register", <Register />)}
+            {AdminRoute("orders",  <Orders />)}
           </Route>
         </Routes>
       </UserContext.Provider>

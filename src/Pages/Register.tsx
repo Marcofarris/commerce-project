@@ -65,6 +65,7 @@ function Register() {
     setNameError(nomeValido);
   };
 
+  //Se la risposta contiene il token lo salvo e ricarico la pagina per renderizzare alla pagine Commerce
   useEffect(() => {
     if (resUser.token != "") {
       setToken(resUser.token)
@@ -83,7 +84,7 @@ function Register() {
     return "ok";
   };
 
-  //Controllo pwd
+  //Controllo name
   const nameValidator = () => {
     if (name.trim() == "") {
       return "Name is required";
@@ -109,7 +110,7 @@ function Register() {
   };
 
 
-  // Render error pwd
+  // Render error name
   const renderNameError = () => {
     if (nameError != "ok") {
       return (

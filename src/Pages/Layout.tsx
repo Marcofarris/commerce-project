@@ -4,8 +4,10 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../UserContext";
-import Button from "react-bootstrap/Button";
+//import Button from "react-bootstrap/Button";
 import './Layout.css';
+
+import { Button, ButtonGroup } from '@chakra-ui/react'
 
 const Layout = () => {
   const [token, setToken] = useContext(UserContext);
@@ -38,6 +40,16 @@ const Layout = () => {
     }
   };
 
+  const renderBtnOrders = ()=>{
+    if (window.sessionStorage.getItem("role") == "Admin") {
+      return (
+        <Link to="/orders" className="btn btn-primary">Ordini</Link>
+      );
+    } else {
+      return null
+    }
+  }
+
 
 
   return (
@@ -46,6 +58,8 @@ const Layout = () => {
         <Container fluid>
           <Link to="/commerce" className="btn btn-dark">Commerce</Link>
           <Link to="/charts" className="btn btn-info m-2">Charts</Link>
+          <Link to="/email" className="btn btn-info m-2">Email</Link>
+          {renderBtnOrders()}
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
             <Nav
