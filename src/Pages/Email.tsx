@@ -1,13 +1,12 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Container from "react-bootstrap/Container";
 import { Button, Textarea } from '@chakra-ui/react'
+import {urlApi} from '../Costanti';
 
 import {
     FormControl,
     FormLabel,
-    FormErrorMessage,
-    FormHelperText,
     Input,
 } from '@chakra-ui/react'
 
@@ -20,7 +19,7 @@ function Email() {
         emailData.append('email', email);
         emailData.append('content', content);
 
-        fetch(`http://127.0.0.1:8000/api/send-email`,
+        fetch(`${urlApi}/send-email`,
         {
           method: "POST",
           headers: {

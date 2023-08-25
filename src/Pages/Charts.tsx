@@ -4,9 +4,8 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
-import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
-
+import {urlApi} from '../Costanti';
 
 
 function Charts() {
@@ -16,7 +15,7 @@ function Charts() {
 
     // Recuperare dati da api storico
     useEffect(() => {
-        fetch(`http://127.0.0.1:8000/api/storico`,
+        fetch(`${urlApi}/storico`,
             {
                 method: "GET",
                 headers: {
@@ -36,7 +35,7 @@ function Charts() {
 
     // Recuperare dati da api storico
  
-        fetch(`http://127.0.0.1:8000/api/export/`+sessionStorage.getItem("user_id"),
+        fetch(`${urlApi}/export/`+sessionStorage.getItem("user_id"),
             {
                 method: "GET",
                 headers: {

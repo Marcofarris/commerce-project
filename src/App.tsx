@@ -17,7 +17,8 @@ function App() {
 
   const [token, setToken] = useState(window.sessionStorage.getItem("token"));
 
-  const PrivateRoute = (percorso: string, component) => {
+
+  const PrivateRoute = (percorso: string, component:any) => {
     //Creare fetch per prendere tokenServer?
     // If(tokenSession == tokenServer?)
     if (window.sessionStorage.getItem("token") != null) {
@@ -26,7 +27,7 @@ function App() {
     return <Route path={percorso} element={<Navigate replace to="/login" />} />
   };
 
-  const GuestRoute = (percorso: string, component) => {
+  const GuestRoute = (percorso: string, component:any) => {
     //Creare fetch per prendere tokenServer?
     // If(tokenSession == tokenServer?)
     if (window.sessionStorage.getItem("token") != null) {
@@ -35,7 +36,7 @@ function App() {
     return <Route index path={percorso} element={component} />
   };
 
-  const AdminRoute = (percorso: string, component) => {
+  const AdminRoute = (percorso: string, component:any) => {
     //Creare fetch per prendere tokenServer?
     // If(tokenSession == tokenServer?)
     if (window.sessionStorage.getItem("role") == "Admin") {
@@ -47,7 +48,7 @@ function App() {
   return (
 
     <BrowserRouter>
-      <UserContext.Provider value={[token, setToken]}>
+      {/* <UserContext.Provider value={[token, setToken]}> */}
         <Routes>
           <Route path="/" element={<Layout />}>
             {PrivateRoute("commerce", <Commerce />)}
@@ -60,7 +61,7 @@ function App() {
             {AdminRoute("orders",  <Orders />)}
           </Route>
         </Routes>
-      </UserContext.Provider>
+      {/* </UserContext.Provider> */}
     </BrowserRouter>
   );
 }

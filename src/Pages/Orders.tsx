@@ -7,26 +7,27 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
 import Table from 'react-bootstrap/Table';
+import {urlApi} from '../Costanti';
 
 function Orders() {
   const [ordini, setOrdini] = useState([
     { id: 0, user_id: 0, cassa_id: 0, quantita: 0, price: 0 },
   ]);
-  const URL = "http://localhost:8000/api";
+
   const [role, setRole] = useState(sessionStorage.getItem("role"));
  
 
 
 
 
-  const buy = (id, cassa_id) => {
+  const buy = (id:number, cassa_id:number) => {
     // 
     let acquisto = new FormData();
     acquisto.append('order_id', String(id));
     acquisto.append('cassa_id', String(cassa_id));
     acquisto.append('user_id', String(sessionStorage.getItem("user_id")));
 
-    fetch(`${URL}/acquista`,
+    fetch(`${urlApi}/acquista`,
       {
         method: "POST",
         headers: {
@@ -39,7 +40,7 @@ function Orders() {
       res.json().then((ris) => {
         // Richiama fetch get orders
         getOrders();
-        getCarts();
+        //getCarts();
       })
     }
     );
@@ -48,7 +49,7 @@ function Orders() {
   const getOrders = () => {
     // Recupero ordini
     if (role == "Admin") { // Diverso per prova
-      fetch(`${URL}/ordine`,
+      fetch(`${urlApi}/ordine`,
         {
           method: "GET",
           headers: {

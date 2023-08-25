@@ -3,27 +3,27 @@ import { useState, useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 
-import { Box, Grid, GridItem, Select, Stack, Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react'
+import { Select, Stack, Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react'
 import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
 } from '@chakra-ui/react'
-import { Flex, Spacer, Center, Square, Text } from '@chakra-ui/react'
-import { SimpleGrid } from '@chakra-ui/react'
-import { Input } from '@chakra-ui/react'
-import { Button, ButtonGroup } from '@chakra-ui/react'
+import {Text, SimpleGrid, Input, Button} from '@chakra-ui/react'
+import { urlApi } from "../Costanti";
 
 
 function Commerce() {
-  const [carrello, setCarrello] = useState();
+  const [carrello, setCarrello] = useState(0);
   const [input, setInput] = useState("");
   const [category, setCategory] = useState("all");
-  const [articoli, setArticoli] = useState([]);
+  const [articoli, setArticoli] = useState([
+    {id:0, quantita:0, title:"", description:"", price:0, category:""}
+  ]);
   const [ordini, setOrdini] = useState([
     { id: 0, user_id: 0, cassa_id: 0, quantita: 0, price: 0 },
   ]);
-  const URL = "http://localhost:8000/api";
+
   const [role, setRole] = useState(sessionStorage.getItem("role"));
   const [queue, setQueue] = useState([
     { id: 1, totale: 0 },
@@ -43,7 +43,7 @@ function Commerce() {
   }, []);
 
   const getArticles = () => {
-    fetch(`http://127.0.0.1:8000/api/articles`,
+    fetch(`${urlApi}/articles`,
       {
         method: "GET",
         headers: {
@@ -61,14 +61,14 @@ function Commerce() {
     })
   }
 
-  const getArticlesByCategory = (e_categoria) => {
+  const getArticlesByCategory = (e_categoria:string) => {
     if (e_categoria == "all") {
       getArticles()
     } else {
       let categoria = new FormData();
       categoria.append('category', e_categoria);
 
-      fetch(`http://127.0.0.1:8000/api/categoryFilter`,
+      fetch(`${urlApi}/categoryFilter`,
         {
           method: "POST",
           headers: {
@@ -93,7 +93,7 @@ function Commerce() {
       digit.append('input', input);
       digit.append('category', category);
 
-      fetch(`http://127.0.0.1:8000/api/findArticles`,
+      fetch(`${urlApi}/findArticles`,
         {
           method: "POST",
           headers: {
@@ -115,7 +115,7 @@ function Commerce() {
   }, [input])
 
   const getCarts = () => {
-    fetch(`${URL}/casse`,
+    fetch(`${urlApi}/casse`,
       {
         method: "GET",
         headers: {
@@ -131,7 +131,7 @@ function Commerce() {
     );
   }
 
-  const handleSubmit = (price, qt) => {
+  const handleSubmit = (price:number, qt:number) => {
     //event.preventDefault();
     //onst checkout = event.target[0].value;
     const minQueue = queue.reduce((prev, curr) =>
@@ -153,7 +153,7 @@ function Commerce() {
       ordine.append('quantita', String(qt));
       ordine.append('price', String(price));
 
-      fetch(`${URL}/ordine`,
+      fetch(`${urlApi}/ordine`,
         {
           method: "POST",
           headers: {
@@ -172,6 +172,7 @@ function Commerce() {
       //setQueue(newState);
       getCarts();
       setCarrello(0);
+  
     } else {
       alert("Devi inserire una quantità positiva")
     }
@@ -183,7 +184,7 @@ function Commerce() {
   const getOrders = () => {
     // Recupero ordini
     if (role == "Admin") {
-      fetch(`${URL}/ordine`,
+      fetch(`${urlApi}/ordine`,
         {
           method: "GET",
           headers: {
@@ -253,12 +254,12 @@ function Commerce() {
                 <Td>{el.category}</Td>
                 <Td >
                   <Stack shouldWrapChildren direction='row'>
-                    <NumberInput size='lg' >
-                      <NumberInputField border='10px' boxShadow='md' placeholder="inserisci quantità..." value={el.quantita} onChange={(e) => {
+                    <NumberInput size='lg' value={el.quantita} onChange={(e) => {if(e == ""){el.quantita=0}}}>
+                      <NumberInputField  border='10px' boxShadow='md' placeholder="inserisci quantità..."  onChange={(e) => {
                         // Inserisco la quantita come proprietà nell'oggetto articoli
                         const newState = articoli.map((element) => {
                           if (element.id == el.id) {
-                            element.quantita = e.target.value;
+                            element.quantita = parseInt(e.target.value);
                           }
                           return element;
                         });
@@ -274,7 +275,7 @@ function Commerce() {
                 <Td>
                   <Button onClick={() => {
                     handleSubmit(el.price, el.quantita)
-                    el.quantita = '';
+                    el.quantita = 0;
                   }
                   }
                     key={el.id} colorScheme='red'>Add</Button></Td>

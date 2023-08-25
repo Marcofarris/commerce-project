@@ -2,30 +2,16 @@ import { Container } from "react-bootstrap";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 //import { useNavigate, useOutletContext } from "react-router-dom";
 import { useState, useEffect } from "react";
-// import {
-//   Flex,
-//   Heading,
-//   Input,
-//   Button,
-//   InputGroup,
-//   Stack,
-//   InputLeftElement,
-//   chakra,
-//   Box,
-//   Link,
-//   Avatar,
-//   FormControl,
-//   FormHelperText,
-//   InputRightElement
-// } from "@chakra-ui/react";
-// import { FaUserAlt, FaLock } from "react-icons/fa";
+
+import {urlApi} from '../Costanti';
 
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const handleShowClick = () => setShowPassword(!showPassword);
 
-  const [token, setToken] = useOutletContext();
+  // Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator
+  //const [token, setToken] = useOutletContext();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,11 +29,9 @@ function Login() {
       }
     }
   );
-  const URL = "http://localhost:8000/api";
 
 
-
-  const handleSubmit = (e) => {
+  const handleSubmit = (e:any) => {
     e.preventDefault();
     let pwdValida = passwordValidator();
     if (pwdValida == "ok") {
@@ -55,7 +39,7 @@ function Login() {
       let user = new FormData();
       user.append('email', email);
       user.append('password', password);
-      fetch(`${URL}/login`,
+      fetch(`${urlApi}/login`,
         {
           method: "POST",
           headers: {
@@ -83,7 +67,7 @@ function Login() {
   //Se la risposta contiene il token lo salvo e ricarico la pagina per renderizzare alla pagine Commerce
   useEffect(() => {
     if (resUser.token != "") {
-      setToken(resUser.token)
+      //setToken(resUser.token)
       window.sessionStorage.setItem("token", resUser.token);
       window.location.reload();
     }

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
+import {urlApi} from '../Costanti';
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -12,7 +13,8 @@ function Register() {
   const [pwdError, setPwdError] = useState("ok");
   const [nameError, setNameError] = useState("ok");
 
-  const [token, setToken] = useOutletContext();
+  // Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator
+  //const [token, setToken] = useOutletContext();
 
   const [resUser, setResUser] = useState(
     {
@@ -27,11 +29,11 @@ function Register() {
       }
     }
   );
-  const URL = "http://localhost:8000/api";
+
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e:any) => {
     e.preventDefault();
     let nomeValido = nameValidator();
     let pwdValida = passwordValidator();
@@ -42,7 +44,7 @@ function Register() {
       user.append('email', email);
       user.append('password', password);
       user.append('role', role)
-      fetch(`${URL}/user`,
+      fetch(`${urlApi}/user`,
         {
           method: "POST",
           headers: {
@@ -68,7 +70,7 @@ function Register() {
   //Se la risposta contiene il token lo salvo e ricarico la pagina per renderizzare alla pagine Commerce
   useEffect(() => {
     if (resUser.token != "") {
-      setToken(resUser.token)
+      //setToken(resUser.token)
       window.sessionStorage.setItem("token", resUser.token);
       navigate('/commerce')
     }

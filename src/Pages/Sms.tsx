@@ -2,12 +2,11 @@
 import { useState, useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import { Button, Textarea } from '@chakra-ui/react'
+import {urlApi} from '../Costanti';
 
 import {
     FormControl,
     FormLabel,
-    FormErrorMessage,
-    FormHelperText,
     Input,
 } from '@chakra-ui/react'
 
@@ -20,7 +19,7 @@ function Sms() {
         smsData.append('number', number);
         smsData.append('body', body);
 
-        fetch(`http://127.0.0.1:8000/api/send-sms`,
+        fetch(`${urlApi}/send-sms`,
         {
           method: "POST",
           headers: {

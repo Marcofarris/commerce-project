@@ -1,5 +1,5 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { Autocomplete, DrawingManager, GoogleMap, Polygon, useGoogleMap, useJsApiLoader, } from '@react-google-maps/api';
+import { useRef, useState, useCallback } from 'react';
+import { Autocomplete, DrawingManager, GoogleMap, Polygon, useJsApiLoader, } from '@react-google-maps/api';
 import { Button } from 'react-bootstrap';
 
 
@@ -7,8 +7,8 @@ import { Button } from 'react-bootstrap';
 const MapComponent = () => {
 
     const mapRef = useRef();
-    const polygonRefs = useRef([]);
-    const activePolygonIndex = useRef();
+    const polygonRefs = useRef(0);
+    const activePolygonIndex = useRef(0);
     const autocompleteRef = useRef();
     const drawingManagerRef = useRef();
 
@@ -71,19 +71,19 @@ const MapComponent = () => {
         }
     }
 
-    const onLoadMap = (map) => {
+    const onLoadMap = (map:any) => {
         mapRef.current = map;
     }
 
-    const onLoadPolygon = (polygon, index) => {
+    const onLoadPolygon = (polygon:any, index:number) => {
         polygonRefs.current[index] = polygon;
     }
 
-    const onClickPolygon = (index) => {
+    const onClickPolygon = (index:number) => {
         activePolygonIndex.current = index;
     }
 
-    const onLoadAutocomplete = (autocomplete) => {
+    const onLoadAutocomplete = (autocomplete:any) => {
         autocompleteRef.current = autocomplete;
     }
 

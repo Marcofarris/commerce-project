@@ -6,23 +6,24 @@ import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../UserContext";
 import { useNavigate } from "react-router-dom";
 import './Layout.css';
+import {urlApi} from '../Costanti';
 
 import { Button, ButtonGroup } from '@chakra-ui/react'
 
 const Layout = () => {
-  const [token, setToken] = useContext(UserContext);
-  const URL = "http://localhost:8000/api";
+  //const [token, setToken] = useContext(UserContext);
+
   //const navigate = useNavigate();
 
   //navigate("/login");
 
   const logout = () => {
-    fetch(`${URL}/logout`,
+    fetch(`${urlApi}/logout`,
         {
           method: "POST",
           headers: {
             "Accept": "application/json",
-            'Authorization': 'Bearer ' + token
+            'Authorization': 'Bearer ' + sessionStorage.getItem("token")
           },
         }
       ).then(() =>  {
@@ -77,7 +78,7 @@ const Layout = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      <Outlet context={[token, setToken]} />
+      <Outlet />
     </>
   )
 };
