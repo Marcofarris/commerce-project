@@ -7,6 +7,8 @@ import Login from "./Pages/Login";
 import Email from "./Pages/Email";
 import Orders from "./Pages/Orders";
 import Register from "./Pages/Register";
+import Maps from "./Pages/Maps";
+import Sms from "./Pages/Sms";
 import { useEffect, useState } from "react";
 import { UserContext } from "./UserContext"
 
@@ -50,7 +52,9 @@ function App() {
           <Route path="/" element={<Layout />}>
             {PrivateRoute("commerce", <Commerce />)}
             {PrivateRoute("charts", <Charts />)}
+            {PrivateRoute("maps", <Maps />)}
             {PrivateRoute("email", <Email />)}
+            {PrivateRoute("sms", <Sms />)}
             {GuestRoute("login", <Login />)}
             {GuestRoute("register", <Register />)}
             {AdminRoute("orders",  <Orders />)}

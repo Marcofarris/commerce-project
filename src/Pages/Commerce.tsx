@@ -8,8 +8,6 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
 } from '@chakra-ui/react'
 import { Flex, Spacer, Center, Square, Text } from '@chakra-ui/react'
 import { SimpleGrid } from '@chakra-ui/react'
