@@ -1,7 +1,7 @@
 import { Container } from "react-bootstrap";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 //import { useNavigate, useOutletContext } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 
 import {urlApi} from '../Costanti';
 
@@ -31,7 +31,7 @@ function Login() {
   );
 
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = (e:React.SyntheticEvent) => {
     e.preventDefault();
     let pwdValida = passwordValidator();
     if (pwdValida == "ok") {

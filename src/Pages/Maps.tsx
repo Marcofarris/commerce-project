@@ -6,20 +6,18 @@ import { Button } from 'react-bootstrap';
 //const libraries = ['places', 'drawing'];
 const MapComponent = () => {
 
-    const mapRef = useRef();
-    const polygonRefs = useRef(0);
+    const mapRef = useRef<google.maps.Map>();
+    const polygonRefs = useRef<google.maps.Polygon>();
     const activePolygonIndex = useRef(0);
-    const autocompleteRef = useRef();
-    const drawingManagerRef = useRef();
+    const autocompleteRef = useRef<React.MutableRefObject<undefined>>();
+    const drawingManagerRef = useRef<google.maps.drawing.DrawingManager>();
 
     const { isLoaded, loadError } = useJsApiLoader({
         googleMapsApiKey: 'AIzaSyB4QUgfnF1jHBokJPXuxHs_sSPCZ7r_VeY',
         libraries: ['places', 'drawing']
     });
 
-    const [polygons, setPolygons] = useState([
-
-    ]);
+    const [polygons, setPolygons] = useState<google.maps.Polygon[]>([]);
 
     const defaultCenter = {
         lat: 39.216266,
@@ -71,43 +69,44 @@ const MapComponent = () => {
         }
     }
 
-    const onLoadMap = (map:any) => {
+    const onLoadMap = (map:google.maps.Map) => {
         mapRef.current = map;
     }
 
-    const onLoadPolygon = (polygon:any, index:number) => {
-        polygonRefs.current[index] = polygon;
+    const onLoadPolygon = (polygon:google.maps.Polygon, index:number) => {
+        polygonRefs.current = polygon;
     }
 
     const onClickPolygon = (index:number) => {
         activePolygonIndex.current = index;
     }
 
-    const onLoadAutocomplete = (autocomplete:any) => {
+    const onLoadAutocomplete = (autocomplete:React.MutableRefObject<undefined>) => {
         autocompleteRef.current = autocomplete;
     }
 
+    // sarebbe corretto modificare la classe eliminando undefined?
     const onPlaceChanged = () => {
-        const { geometry } = autocompleteRef.current.getPlace();
+        const { geometry } = autocompleteRef.current!.getPlace();//possible undefined 
         const bounds = new window.google.maps.LatLngBounds();
         if (geometry.viewport) {
             bounds.union(geometry.viewport);
         } else {
             bounds.extend(geometry.location);
         }
-        mapRef.current.fitBounds(bounds);
+        mapRef.current!.fitBounds(bounds); //possible undefinded
     }
 
-    const onLoadDrawingManager = drawingManager => {
+    const onLoadDrawingManager = (drawingManager: google.maps.drawing.DrawingManager) => {
         drawingManagerRef.current = drawingManager;
     }
 
-    const onOverlayComplete = ($overlayEvent) => {
-        drawingManagerRef.current.setDrawingMode(null);
+    const onOverlayComplete = ($overlayEvent:google.maps.drawing.OverlayCompleteEvent) => {
+        drawingManagerRef.current!.setDrawingMode(null); //possible undefinded
         if ($overlayEvent.type === window.google.maps.drawing.OverlayType.POLYGON) {
-            const newPolygon = $overlayEvent.overlay.getPath()
+            const newPolygon = $overlayEvent.overlay.getPath() 
                 .getArray()
-                .map(latLng => ({ lat: latLng.lat(), lng: latLng.lng() }))
+                .map((latLng: { lat: () => number; lng: () => number; }) => ({ lat: latLng.lat(), lng: latLng.lng() }))
 
             // start and end point should be same for valid geojson
             const startPoint = newPolygon[0];
@@ -118,21 +117,22 @@ const MapComponent = () => {
     }
 
     const onDeleteDrawing = () => {
-        const filtered = polygons.filter((polygon, index) => index !== activePolygonIndex.current)
+        const filtered = polygons.filter((polygon, index) => index !== activePolygonIndex.current) 
         setPolygons(filtered)
     }
 
-    const onEditPolygon = (index) => {
-        const polygonRef = polygonRefs.current[index];
-        if (polygonRef) {
-            const coordinates = polygonRef.getPath()
-                .getArray()
-                .map(latLng => ({ lat: latLng.lat(), lng: latLng.lng() }));
+    const onEditPolygon = (index:number) => {
+        // const polygonRef = polygonRefs.current;
+        // if (polygonRef) {
+        //     const coordinates = polygonRef.getPath()
+        //         .getArray()
+        //         .map(latLng => ({ lat: latLng.lat(), lng: latLng.lng() }));
 
-            const allPolygons = [...polygons];
-            allPolygons[index] = coordinates;
-            setPolygons(allPolygons)
-        }
+
+        //     const allPolygons = [...polygons];
+        //     allPolygons[index].coordinate = coordinates;
+        //     setPolygons(allPolygons)
+        // }
     }
 
     // Poligono fisso
@@ -143,8 +143,8 @@ const MapComponent = () => {
     ]);
 
     // Define refs for Polygon instance and listeners
-    const polygonRef = useRef(null);
-    const listenersRef = useRef([]);
+    const polygonRef = useRef<google.maps.Polygon>(null);
+    const listenersRef = useRef<any[]>([]); // da correggere any
 
     // Poligono fisso
     const onEdit = useCallback(() => {
@@ -152,7 +152,7 @@ const MapComponent = () => {
             const nextPath = polygonRef.current
                 .getPath()
                 .getArray()
-                .map(latLng => {
+                .map((latLng: { lat: () => number; lng: () => number; }) => {
                     return { lat: latLng.lat(), lng: latLng.lng() };
                 });
             setPath(nextPath);
@@ -165,9 +165,9 @@ const MapComponent = () => {
 
     // Poligono fisso
     const onLoad2 = useCallback(
-        polygon => {
-            polygonRef.current = polygon;
-            const path = polygon.getPath();
+        (        polygon: { getPath: () => any; }) => {
+            //polygonRef.current = polygon;
+            const path = polygon.getPath(); 
             listenersRef.current.push(
                 path.addListener("set_at", onEdit),
                 path.addListener("insert_at", onEdit),
@@ -179,8 +179,8 @@ const MapComponent = () => {
 
     // Poligono fisso
     const onUnmount2 = useCallback(() => {
-        listenersRef.current.forEach(lis => lis.remove());
-        polygonRef.current = null;
+        listenersRef.current.forEach((lis) => lis.remove());
+        //polygonRef.current = null;
     }, []);
 
   
@@ -204,7 +204,6 @@ const MapComponent = () => {
                     center={center}
                     onLoad={onLoadMap}
                     mapContainerStyle={containerStyle}
-                    onTilesLoaded={() => setCenter(null)}
                 >
                     <div style={{
                         position: "relative",

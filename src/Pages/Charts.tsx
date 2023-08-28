@@ -45,7 +45,9 @@ function Charts() {
             }
         ).then(res => res.blob())
             .then(blob => {
-                var file = window.URL.createObjectURL(blob);
+                console.log(blob) // Blob{size: 6568, type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}
+                //console.log(json) => "is not a valid json"
+                let file = window.URL.createObjectURL(blob);
                 window.location.assign(file);
             });
 

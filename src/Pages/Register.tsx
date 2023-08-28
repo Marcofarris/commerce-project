@@ -33,7 +33,7 @@ function Register() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = (e:React.SyntheticEvent) => {
     e.preventDefault();
     let nomeValido = nameValidator();
     let pwdValida = passwordValidator();
